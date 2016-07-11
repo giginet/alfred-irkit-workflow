@@ -9,6 +9,7 @@ import subprocess
 from workflow import Workflow, web, ICON_ERROR
 
 CONFIG_FILE_NAME = '.irkit.json'
+ICON_FILE_NAME = 'icon.png'
 IRKIT_CONFIG_JSON_PATH = os.path.join(os.environ['HOME'], CONFIG_FILE_NAME)
 
 
@@ -41,6 +42,12 @@ def main_search(wf):
             query = args[0]
         config = json.loads(f.read())
         devices = config['Device']
+
+        if len(devices) == 0:
+            wf.add_item(u'any devices are not defined', icon=ICON_ERROR)
+            wf.send_feedback()
+            return
+
         device = devices.keys()[0]
         irs = config['IR']
         names = irs.keys()
@@ -49,6 +56,7 @@ def main_search(wf):
         for name in names:
             wf.add_item("Post %s" % name, "via %s" % device,
                         arg=name,
+                        icon=ICON_FILE_NAME,
                         valid=True)
     wf.send_feedback()
 
