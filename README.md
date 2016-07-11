@@ -1,4 +1,4 @@
-# Alfread IRKit Workflow
+# Alfred IRKit Workflow
 
 This is an alfred workflow to send signal for [IRKit](http://getirkit.com/en/).
 
