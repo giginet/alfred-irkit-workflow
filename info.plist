@@ -4,6 +4,8 @@
 <dict>
 	<key>bundleid</key>
 	<string>org.giginet.AlfredIRKitWorkflow</string>
+	<key>category</key>
+	<string>Tools</string>
 	<key>connections</key>
 	<dict>
 		<key>654E889E-5881-40DF-A6F5-72DA7A72E59E</key>
@@ -27,7 +29,7 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>alfred-irkit-workflow</string>
+	<string>Alfred IRKit Workflow</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -61,7 +63,7 @@ python irkit.py "{query}"</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string>Post IRKit signal</string>
+				<string>Send IRKit signal</string>
 				<key>type</key>
 				<integer>5</integer>
 				<key>withspace</key>
