@@ -6,10 +6,10 @@ import os
 import json
 import subprocess
 
-from workflow import Workflow
-from workflow import web
+from workflow import Workflow, web, ICON_ERROR
 
-ALFRED_CONFIG_JSON_PATH = os.path.join(os.environ['HOME'], '.irkit.json')
+CONFIG_FILE_NAME = '.irkit.json'
+IRKIT_CONFIG_JSON_PATH = os.path.join(os.environ['HOME'], CONFIG_FILE_NAME)
 
 
 class Client(object):
@@ -34,13 +34,18 @@ class Client(object):
 
 def main_search(wf): 
     args = wf.args
-    query = args[0]
-    with open(ALFRED_CONFIG_JSON_PATH, 'r') as f:
+
+    with open(IRKIT_CONFIG_JSON_PATH, 'r') as f:
+        query = None
+        if len(args) > 0:
+            query = args[0]
         config = json.loads(f.read())
         devices = config['Device']
         device = devices.keys()[0]
         irs = config['IR']
-        names = wf.filter(query, irs.keys())
+        names = irs.keys()
+        if query:
+            names = wf.filter(query, names)
         for name in names:
             wf.add_item("Post %s" % name, "via %s" % device,
                         arg=name,
@@ -48,12 +53,16 @@ def main_search(wf):
     wf.send_feedback()
 
 def main_post(wf):
-    with open(ALFRED_CONFIG_JSON_PATH, 'r') as f:
+    with open(IRKIT_CONFIG_JSON_PATH, 'r') as f:
         config = json.loads(f.read())
         client = Client(config)
         name = wf.args[1]
         client.post_signal(name)
         wf.send_feedback()
+
+def config_not_found(wf):
+    wf.add_item(u'%s is not found' % CONFIG_FILE_NAME, icon=ICON_ERROR)
+    wf.send_feedback()
 
 if __name__ == '__main__':
     wf = Workflow(update_settings={
@@ -61,6 +70,8 @@ if __name__ == '__main__':
         'version': open(os.path.join(os.path.dirname(__file__), 'version')).read(),
     })
     args = wf.args
+    if not os.path.exists(IRKIT_CONFIG_JSON_PATH):
+        sys.exit(wf.run(config_not_found))
     if len(args) >= 2 and args[0] == '--post':
         sys.exit(wf.run(main_post))
     sys.exit(wf.run(main_search))
